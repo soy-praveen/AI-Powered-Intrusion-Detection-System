@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Stats Cards -->
+    <div class="stats-row">
+        <div class="stat-card threats-card">
+            <div class="stat-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="threatsDetected">0</h3>
+                <p class="stat-label">Threats Detected</p>
+                <span class="stat-change positive">+12% from yesterday</span>
+            </div>
+            <div class="stat-chart">
+                <canvas id="threatsChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="stat-card packets-card">
+            <div class="stat-icon">
+                <i class="fas fa-network-wired"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="packetsAnalyzed">0</h3>
+                <p class="stat-label">Packets Analyzed</p>
+                <span class="stat-change positive">+5.2% from yesterday</span>
+            </div>
+            <div class="stat-chart">
+                <canvas id="packetsChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="stat-card performance-card">
+            <div class="stat-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="systemLoad">0%</h3>
+                <p class="stat-label">System Load</p>
+                <span class="stat-change neutral">Normal operation</span>
+            </div>
+            <div class="stat-chart">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="stat-card accuracy-card">
+            <div class="stat-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">95.6%</h3>
+                <p class="stat-label">Detection Accuracy</p>
+                <span class="stat-change positive">+0.3% improvement</span>
+            </div>
+            <div class="stat-chart">
+                <canvas id="accuracyChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Charts Row -->
+    <div class="charts-row">
+        <div class="chart-card threat-timeline-card">
+            <div class="card-header">
+                <h3 class="card-title">Threat Detection Timeline</h3>
+                <div class="card-controls">
+                    <select class="time-range-select" id="timeRangeSelect">
+                        <option value="1h">Last Hour</option>
+                        <option value="24h" selected>Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-content">
+                <canvas id="threatTimelineChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card attack-types-card">
+            <div class="card-header">
+                <h3 class="card-title">Attack Types Distribution</h3>
+            </div>
+            <div class="card-content">
+                <canvas id="attackTypesChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Network Activity & Recent Threats -->
+    <div class="activity-row">
+        <div class="activity-card network-activity-card">
+            <div class="card-header">
+                <h3 class="card-title">Network Activity</h3>
+                <div class="activity-controls">
+                    <button class="control-btn" id="startMonitoring">
+                        <i class="fas fa-play"></i>
+                        Start Monitoring
+                    </button>
+                    <button class="control-btn stop-btn" id="stopMonitoring" style="display: none;">
+                        <i class="fas fa-stop"></i>
+                        Stop Monitoring
+                    </button>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="network-stats">
+                    <div class="network-stat">
+                        <span class="stat-label">Bandwidth Usage</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                        <span class="stat-value">65%</span>
+                    </div>
+                    <div class="network-stat">
+                        <span class="stat-label">Active Connections</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 42%"></div>
+                        </div>
+                        <span class="stat-value">1,247</span>
+                    </div>
+                    <div class="network-stat">
+                        <span class="stat-label">Suspicious Activity</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill warning" style="width: 15%"></div>
+                        </div>
+                        <span class="stat-value">15%</span>
+                    </div>
+                </div>
+                <canvas id="networkActivityChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="activity-card recent-threats-card">
+            <div class="card-header">
+                <h3 class="card-title">Recent Threats</h3>
+                <button class="refresh-btn" id="refreshThreats">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="threats-list" id="threatsList">
+                    <!-- Threats will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Performance -->
+    <div class="performance-row">
+        <div class="performance-card">
+            <div class="card-header">
+                <h3 class="card-title">Model Performance Metrics</h3>
+            </div>
+            <div class="card-content">
+                <div class="model-metrics">
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <span class="metric-name">Random Forest</span>
+                            <span class="metric-status active">Active</span>
+                        </div>
+                        <div class="metric-values">
+                            <div class="metric-value">
+                                <span class="value-label">Accuracy</span>
+                                <span class="value-number">95.6%</span>
+                            </div>
+                            <div class="metric-value">
+                                <span class="value-label">Precision</span>
+                                <span class="value-number">94.2%</span>
+                            </div>
+                            <div class="metric-value">
+                                <span class="value-label">Recall</span>
+                                <span class="value-number">96.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <span class="metric-name">LSTM Neural Network</span>
+                            <span class="metric-status active">Active</span>
+                        </div>
+                        <div class="metric-values">
+                            <div class="metric-value">
+                                <span class="value-label">Accuracy</span>
+                                <span class="value-number">93.8%</span>
+                            </div>
+                            <div class="metric-value">
+                                <span class="value-label">Precision</span>
+                                <span class="value-number">92.1%</span>
+                            </div>
+                            <div class="metric-value">
+                                <span class="value-label">Recall</span>
+                                <span class="value-number">95.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <span class="metric-name">SVM Classifier</span>
+                            <span class="metric-status active">Active</span>
+                        </div>
+                        <div class="metric-values">
+                            <div class="metric-value">
+                                <span class="value-label">Accuracy</span>
+                                <span class="value-number">91.3%</span>
+                            </div>
+                            <div class="metric-value">
+                                <span class="value-label">Precision</span>
+                                <span class="value-number">89.7%</span>
+                            </div>
+                            <div class="metric-value">
+                                <span class="value-label">Recall</span>
+                                <span class="value-number">93.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}
